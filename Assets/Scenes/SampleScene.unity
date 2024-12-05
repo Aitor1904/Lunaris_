@@ -675,7 +675,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &557048125
 Transform:
   m_ObjectHideFlags: 0
@@ -1341,10 +1341,11 @@ GameObject:
   - component: {fileID: 2101663952}
   - component: {fileID: 2101663951}
   - component: {fileID: 2101663957}
-  - component: {fileID: 2101663956}
+  - component: {fileID: 2101663959}
   - component: {fileID: 2101663955}
   - component: {fileID: 2101663950}
   - component: {fileID: 2101663954}
+  - component: {fileID: 2101663958}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1520,7 +1521,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Look[/Mouse/delta,/Pen/delta]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2101663956}
+      - m_Target: {fileID: 2101663959}
         m_TargetAssemblyTypeName: Shooting, Assembly-CSharp
         m_MethodName: Shot
         m_Mode: 0
@@ -1600,7 +1601,7 @@ MonoBehaviour:
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2101663957}
         m_TargetAssemblyTypeName: Movement, Assembly-CSharp
         m_MethodName: ActivateDash
         m_Mode: 0
@@ -1614,27 +1615,27 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 3047a970-80cb-46c7-9ab4-ef35db46b0ef
     m_ActionName: Player/Dash
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2101663958}
+        m_TargetAssemblyTypeName: WeaponChange, Assembly-CSharp
+        m_MethodName: OnSwitchWeapon
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4c0db8d3-122d-4845-bcff-f242b69e8309
+    m_ActionName: 'Player/WeaponChange[/Keyboard/q]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &2101663956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101663947}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8e6abd7ae4247948b15cb919f55fbeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerBullet: {fileID: 2231113316423981709, guid: 0ce13afdaf442cc4689d57dabd274e0d, type: 3}
-  bulletOrigin: {fileID: 33236391}
-  shotForce: 2000
-  shotRate: 0
 --- !u!114 &2101663957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1652,6 +1653,36 @@ MonoBehaviour:
   dashingTime: 0.2
   dashForce: 20
   timeCanDash: 1
+--- !u!114 &2101663958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101663947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae7958d291800234d9234bb63afcae68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Gun: {fileID: 557048124}
+  Shovel: {fileID: 1164807491}
+--- !u!114 &2101663959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101663947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e6abd7ae4247948b15cb919f55fbeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerBullet: {fileID: 2231113316423981709, guid: 0ce13afdaf442cc4689d57dabd274e0d, type: 3}
+  bulletOrigin: {fileID: 33236391}
+  shotForce: 2000
+  shotRate: 0
 --- !u!1 &2105981997
 GameObject:
   m_ObjectHideFlags: 0

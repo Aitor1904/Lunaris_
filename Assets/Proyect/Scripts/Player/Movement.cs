@@ -10,10 +10,14 @@ public class Movement : MonoBehaviour
     float speed;
     float horizontalMovement;
     bool isLookingRight = true;
+
     [Header("Jump")]
-    [SerializeField]
-    float jumpForce;
-    bool isJumping = false;
+    [SerializeField] private float jumpForce;
+    private bool isGrounded = false;
+    [SerializeField] private Transform groundChecker; 
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private LayerMask groundLayer;
+
     [Header("Dash")]
     [SerializeField]
     private float dashingTime = 0.2f;
@@ -37,7 +41,9 @@ public class Movement : MonoBehaviour
         {
             return;
         }
-        
+
+        isGrounded = Physics.CheckSphere(groundChecker.position, groundCheckRadius, groundLayer);
+
         rb.linearVelocity = new Vector3(horizontalMovement * speed, rb.linearVelocity.y);
     }
 
@@ -96,7 +102,7 @@ public class Movement : MonoBehaviour
     }
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
@@ -104,11 +110,14 @@ public class Movement : MonoBehaviour
     }
     void Flip()
     {
-        Vector3 currentScale = gameObject.transform.localScale;
+        /*Vector3 currentScale = gameObject.transform.localScale;
         currentScale.x *= -1;
         gameObject.transform.localScale = currentScale;
+        */
+
+        transform.rotation = Quaternion.Euler(0, isLookingRight ? 180 : 0, 0);
 
         isLookingRight = !isLookingRight;
-    }
 
+    }
 }

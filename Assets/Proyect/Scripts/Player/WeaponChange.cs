@@ -3,10 +3,16 @@ using UnityEngine.InputSystem;
 
 public class WeaponChange : MonoBehaviour
 {
-    [SerializeField] private GameObject Gun; 
-    [SerializeField] private GameObject Shovel;
+    [SerializeField] 
+    private GameObject Gun; 
+    [SerializeField] 
+    private GameObject Shovel;
+    [SerializeField]
+    Animator playerAnimator;
 
     private int currentWeaponIndex = 1;
+
+    public bool canShoot = true;
 
     void Start()
     {
@@ -19,6 +25,7 @@ public class WeaponChange : MonoBehaviour
         {
             currentWeaponIndex = (currentWeaponIndex == 1) ? 2 : 1;
             ActivateWeapon(currentWeaponIndex);
+            playerAnimator.SetTrigger("WeapondChange");
         }
     }
 
@@ -28,11 +35,13 @@ public class WeaponChange : MonoBehaviour
         {
             Gun.SetActive(true);
             Shovel.SetActive(false);
+            canShoot = true;
         }
         else if (weaponIndex == 2)
         {
             Gun.SetActive(false);
             Shovel.SetActive(true);
+            canShoot = false;
         }
     }
 }

@@ -7,9 +7,14 @@ public class Movement : MonoBehaviour
     [Header("BasicMovement")]
     Rigidbody rb;
     [SerializeField]
-    float speed;
+    float currentSpeed;
+    [SerializeField]
+    float acceleration = 1.0f;
+    [SerializeField]
+    float maxSpeed = 10f;
     float horizontalMovement;
     bool isLookingRight = true;
+    float movementSpeed;
 
     [Header("Jump")]
     [SerializeField] private float jumpForce;
@@ -17,6 +22,9 @@ public class Movement : MonoBehaviour
     [SerializeField] private Transform groundChecker; 
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float doubleJumpForce;
+    private bool doubleJump = false;
+    [SerializeField] bool canJump;
 
     [Header("Dash")]
     [SerializeField]
@@ -27,16 +35,28 @@ public class Movement : MonoBehaviour
     private float timeCanDash = 1f;
     private bool isDashing;
     private bool canDash = true;
+    [SerializeField]
+    TrailRenderer dashTrailRenderer;
+
+    [Header("Animator")]
+    [SerializeField]
+    Animator playerAnimator;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-    }
-    private void Awake()
-    {
 
     }
     private void Update()
     {
+        playerAnimator.SetFloat("Velocity", Mathf.Abs(horizontalMovement));
+        movementSpeed = horizontalMovement * currentSpeed;
+        //Acceleration
+        currentSpeed += acceleration * Time.deltaTime;
+        if(currentSpeed > maxSpeed)
+        {
+            currentSpeed = maxSpeed;
+        }
         if (isDashing)
         {
             return;
@@ -44,7 +64,18 @@ public class Movement : MonoBehaviour
 
         isGrounded = Physics.CheckSphere(groundChecker.position, groundCheckRadius, groundLayer);
 
-        rb.linearVelocity = new Vector3(horizontalMovement * speed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector3(movementSpeed, rb.linearVelocity.y);
+        if(isGrounded == true)
+        {
+            canJump = true;
+            doubleJump = true;
+            playerAnimator.SetBool("InTheAir", false);
+        }
+        if(rb.linearVelocity.y <0 && isGrounded == false)
+        {
+            playerAnimator.SetBool("InTheAir", true);
+            playerAnimator.SetBool("Jump", false);
+        }
     }
 
     public void Move(InputAction.CallbackContext context)
@@ -67,14 +98,35 @@ public class Movement : MonoBehaviour
             Flip();
         }
     }
+    public void Jump(InputAction.CallbackContext context)
+    {
+        if (canJump == true)
+        {
+            if (context.performed && isGrounded)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                canJump = false;
+                doubleJump = true;
+                playerAnimator.SetBool("Jump", true);
+            }
+            if(context.performed && doubleJump == true)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, doubleJumpForce);
+                doubleJump = false;
+                dashTrailRenderer.emitting = true;
+                Invoke("DesactivateDashTrailRenderer", 0.8f);
+            }
+        }
+    }
     public void ActivateDash(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
             StartCoroutine(Dash());
+            dashTrailRenderer.emitting = true;
+            Invoke("DesactivateDashTrailRenderer", 0.8f);
         }
     }
-
     private int IsLookingRightToInt(bool isLookingRight)
     {
         if (isLookingRight)
@@ -91,29 +143,23 @@ public class Movement : MonoBehaviour
         isDashing = true;
         canDash = false;
         rb.useGravity = false;
-        Debug.Log(IsLookingRightToInt(isLookingRight) * dashForce);
         rb.linearVelocity = new Vector2(IsLookingRightToInt(isLookingRight) * dashForce, 0f);
         yield return new WaitForSeconds(dashingTime);
         isDashing = false;
         rb.useGravity = true;
         yield return new WaitForSeconds(timeCanDash);
         canDash = true;
-        Debug.Log("Hace");
     }
-    public void Jump(InputAction.CallbackContext context)
+    void DesactivateDashTrailRenderer()
     {
-        if (context.performed && isGrounded)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        }
-
+        dashTrailRenderer.emitting = false;
     }
     void Flip()
     {
         /*Vector3 currentScale = gameObject.transform.localScale;
         currentScale.x *= -1;
-        gameObject.transform.localScale = currentScale;
-        */
+        gameObject.transform.localScale = currentScale;*/
+        
 
         transform.rotation = Quaternion.Euler(0, isLookingRight ? 180 : 0, 0);
 

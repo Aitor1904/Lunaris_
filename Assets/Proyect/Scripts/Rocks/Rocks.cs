@@ -9,8 +9,9 @@ public class Rocks : MonoBehaviour
     [SerializeField]
     GameObject rockParticles;
     bool firstCracked;
+
     private void Start()
-    {
+    {        
         firstCracked = false;
         crackedRock.SetActive(false);
     }
@@ -22,7 +23,7 @@ public class Rocks : MonoBehaviour
             entireRock.SetActive(false);
             crackedRock.SetActive(true);
             firstCracked = true;
-            Debug.Log("Collision");
+            GameManager.Instance.GainPoints(10);
         }
         else if (other.gameObject.CompareTag("PlayerBullet") && firstCracked == true)
         {
@@ -31,19 +32,28 @@ public class Rocks : MonoBehaviour
             Instantiate(rockParticles, transform.position, Quaternion.identity);
             //Invoke("DestroyParticles", 0.5f);
             Destroy(gameObject);
+            GameManager.Instance.GainPoints(30);
         }
         if (other.gameObject.CompareTag("Pala") && firstCracked == false)
         {
             entireRock.SetActive(false);
             crackedRock.SetActive(true);
             firstCracked = true;
-            Debug.Log("Collision");
+            GameManager.Instance.GainPoints(10);
         }
         else if (other.gameObject.CompareTag("Pala") && firstCracked == true)
         {
             crackedRock.SetActive(false);
             Instantiate(rockParticles, transform.position, Quaternion.identity);
             Destroy(gameObject);
+            GameManager.Instance.GainPoints(30);
         }
+        if(other.gameObject.CompareTag("Tuneladora"))
+        {
+            entireRock.SetActive(false);
+            Instantiate(rockParticles, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
+
     }
 }

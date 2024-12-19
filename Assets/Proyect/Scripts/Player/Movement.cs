@@ -13,7 +13,7 @@ public class Movement : MonoBehaviour
     [SerializeField]
     float maxSpeed = 10f;
     float horizontalMovement;
-    bool isLookingRight = true;
+    public bool isLookingRight = true;
     float movementSpeed;
 
     [Header("Jump")]
@@ -41,11 +41,12 @@ public class Movement : MonoBehaviour
     [Header("Animator")]
     [SerializeField]
     Animator playerAnimator;
+    private Rigidbody[] rigidbodies;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-
+        rigidbodies = GetComponentsInChildren<Rigidbody>();
     }
     private void Update()
     {
@@ -61,7 +62,14 @@ public class Movement : MonoBehaviour
         {
             return;
         }
-
+        if(horizontalMovement == 0)
+        {
+            canDash = false;
+        }
+        if(GameManager.Instance.health == 0)
+        {
+            ActivatePlayerRagDoll(true);
+        }
         isGrounded = Physics.CheckSphere(groundChecker.position, groundCheckRadius, groundLayer);
 
         rb.linearVelocity = new Vector3(movementSpeed, rb.linearVelocity.y);
@@ -69,6 +77,7 @@ public class Movement : MonoBehaviour
         {
             canJump = true;
             doubleJump = true;
+            canDash = true;
             playerAnimator.SetBool("InTheAir", false);
         }
         if(rb.linearVelocity.y <0 && isGrounded == false)
@@ -140,30 +149,43 @@ public class Movement : MonoBehaviour
     }
     private IEnumerator Dash()
     {
-        isDashing = true;
-        canDash = false;
-        rb.useGravity = false;
-        rb.linearVelocity = new Vector2(IsLookingRightToInt(isLookingRight) * dashForce, 0f);
-        yield return new WaitForSeconds(dashingTime);
-        isDashing = false;
-        rb.useGravity = true;
-        yield return new WaitForSeconds(timeCanDash);
-        canDash = true;
+        if (canDash == true)
+        {
+            isDashing = true;
+            canDash = false;
+            rb.useGravity = false;
+            rb.linearVelocity = new Vector2(IsLookingRightToInt(isLookingRight) * dashForce, 0f);
+            yield return new WaitForSeconds(dashingTime);
+            isDashing = false;
+            rb.useGravity = true;
+            yield return new WaitForSeconds(timeCanDash);
+            canDash = true;
+        }
     }
     void DesactivateDashTrailRenderer()
     {
         dashTrailRenderer.emitting = false;
     }
+
     void Flip()
     {
-        /*Vector3 currentScale = gameObject.transform.localScale;
+        Vector3 currentScale = gameObject.transform.localScale;
         currentScale.x *= -1;
-        gameObject.transform.localScale = currentScale;*/
+        gameObject.transform.localScale = currentScale;
         
 
-        transform.rotation = Quaternion.Euler(0, isLookingRight ? 180 : 0, 0);
+        //transform.rotation = Quaternion.Euler(0, isLookingRight ? 180 : 0, 0);
 
         isLookingRight = !isLookingRight;
 
+    }
+    void ActivatePlayerRagDoll(bool enable)
+    {
+        bool isKinematic = !enable;
+        foreach (Rigidbody rigidbody in rigidbodies)
+        {
+            rigidbody.isKinematic = isKinematic;
+        }
+        playerAnimator.enabled = !enable;
     }
 }

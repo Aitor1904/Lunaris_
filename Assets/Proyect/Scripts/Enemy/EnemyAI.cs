@@ -28,6 +28,8 @@ public class EnemyAI : MonoBehaviour
     float sightRayCastLenth;
     [SerializeField]
     float attackRayCastLenth;
+    [SerializeField]
+    bool isLookingRight = true;
 
     [Header("Attack")]
     [SerializeField]
@@ -38,7 +40,10 @@ public class EnemyAI : MonoBehaviour
     float shotForce;
     float shotRate;
     float shotRateTime;
-    
+
+    [Header("Animator")]
+    [SerializeField]
+    Animator enemyAnimator;
     private void Start()
     {
         currentPoint = pointB.transform;
@@ -53,6 +58,7 @@ public class EnemyAI : MonoBehaviour
     bool IsPlayerInChaseRange()
     {
         return Physics.Raycast(transform.position, transform.TransformDirection(LookDirection()), out hit, sightRayCastLenth, whatIsPlayer);
+        
     }
     
     bool IsPlayerInAttackRange()
@@ -60,7 +66,6 @@ public class EnemyAI : MonoBehaviour
         return Physics.Raycast(transform.position, transform.TransformDirection(LookDirection()), out hit, attackRayCastLenth, whatIsPlayer);
     }
 
-    bool isLookingRight = true;
     Vector3 LookDirection()
     {
         return isLookingRight ? Vector3.right : Vector3.left;
@@ -109,13 +114,17 @@ public class EnemyAI : MonoBehaviour
         Gizmos.DrawWireSphere(pointA.transform.position, 0.5f);
         Gizmos.DrawWireSphere(pointB.transform.position, 0.5f);
         Gizmos.color = Color.red;
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * sightRayCastLenth, Color.yellow);
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * attackRayCastLenth, Color.red);
+        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * sightRayCastLenth, Color.yellow);
+        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * attackRayCastLenth, Color.red);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Debug.DrawRay(transform.position, transform.TransformDirection(LookDirection()) * attackRayCastLenth, Color.red);
     }
     void Flip()
     {
         Vector3 localScale = transform.localScale;
         localScale.x *= -1;
         transform.localScale = localScale;
+        isLookingRight = !isLookingRight;
     }
 }

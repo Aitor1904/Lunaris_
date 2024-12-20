@@ -9,7 +9,7 @@ public class PlayerInteractions : MonoBehaviour
             GameManager.Instance.gunAmmo += other.gameObject.GetComponent<AmmoBox>().ammo;
             Destroy(other.gameObject);
         }
-        if(other.CompareTag("HealthBox"))
+        if(other.CompareTag("healthBox"))
         {
             GameManager.Instance.GainHP(45);
         }

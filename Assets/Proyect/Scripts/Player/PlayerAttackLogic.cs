@@ -16,6 +16,8 @@ public class PlayerAttackLogic : MonoBehaviour
     private bool isShooting = false;
     [SerializeField]
     ParticleSystem shotParticles;
+    [SerializeField]
+    AudioSource shotAudioSource;
 
   
 
@@ -89,6 +91,7 @@ public class PlayerAttackLogic : MonoBehaviour
             shotRateTime = Time.time + shotRate;
             Destroy(newPlayerBullet, 3f);
             Debug.Log("Shot");
+            shotAudioSource.Play();
         }
     }
 

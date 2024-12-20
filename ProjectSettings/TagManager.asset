@@ -10,6 +10,8 @@ TagManager:
   - GameLogic
   - Tuneladora
   - Sierra
+  - healthBox
+  - Ground
   layers:
   - Default
   - TransparentFX
